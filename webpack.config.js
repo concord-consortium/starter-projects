@@ -5,6 +5,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const ASSET_PATH = process.env.ASSET_PATH || '';
+
 module.exports = (env, argv) => {
   const devMode = argv.mode !== 'production';
 
@@ -14,6 +16,7 @@ module.exports = (env, argv) => {
     entry: './src/index.tsx',
     mode: 'development',
     output: {
+      publicPath: ASSET_PATH,
       filename: 'assets/index.[hash].js'
     },
     performance: { hints: false },
@@ -67,7 +70,9 @@ module.exports = (env, argv) => {
         filename: devMode ? "assets/index.css" : "assets/index.[hash].css"
       }),
       new HtmlWebpackPlugin({
-        filename: 'index.html',
+        // hack to write out a different file if the asset path is set
+        filename: ASSET_PATH ? 'index-versioned.html': 'index.html',
+        favicon: 'src/public/favicon.ico',
         template: 'src/index.html'
       }),
       new CopyWebpackPlugin([

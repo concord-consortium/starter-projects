@@ -14,6 +14,12 @@ install:
 - travis_retry cypress install
 script:
 - npm run build
+# this is a quick hack to demo a branch build of a versioned file
+# a real version of this would need to check if this ia branch or tag, and strip off
+# any PT identifiers like what s3_deploy is doing
+# also this is rebuilding all of the js files and it puts the pubic path in the js file
+# so it might mean the non versioned file doesn't work anymore
+- ASSET_PATH=branch/$TRAVIS_BRANCH/ npm run build
 - npm run test:coverage -- --runInBand
 - npm run start &
 - wait-on http://localhost:8080
