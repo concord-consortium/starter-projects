@@ -40,7 +40,15 @@ module.exports = (env, argv) => {
           test: /\.(sa|sc|c)ss$/i,
           use: [
             devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
-            'css-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                sourceMap: true,
+                importLoaders: 1,
+                localIdentName: '[name]--[local]--__starter-projects-v1__'
+              }
+            },
             'postcss-loader',
             'sass-loader'
           ]
