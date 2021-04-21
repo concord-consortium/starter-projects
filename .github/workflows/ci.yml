@@ -9,6 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+      - uses: actions/cache@v2
+        # https://github.com/actions/cache/blob/main/examples.md#macos-and-ubuntu
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          # based on this https://glebbahmutov.com/blog/do-not-let-npm-cache-snowball/
+          # the restore-keys is left off. the bahmutov/npm-install is not used so we
+          # have control over the cache key to share it with cypress
       - name: Install Dependencies
         run: npm ci
       - name: Build
@@ -41,6 +49,9 @@ jobs:
           record: ${{ !!secrets.CYPRESS_RECORD_KEY }}
           # only do parallel if we have a record key
           parallel: ${{ !!secrets.CYPRESS_RECORD_KEY }}
+          # use a cache key matching the one used in the build step
+          cache-key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
