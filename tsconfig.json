@@ -4,7 +4,8 @@
     "strict": true,
     "sourceMap": true,
     "noImplicitAny": true,
-    "module": "commonjs",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "target": "es5",
     "allowJs": true,
     "esModuleInterop": true,
@@ -15,7 +16,7 @@
     "jsx": "react",
     "lib": [
       "dom",
-      "ESNext"
+      "es2016"
     ]
   },
   "include": [
