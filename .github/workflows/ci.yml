@@ -65,8 +65,7 @@ jobs:
       - cypress
     runs-on: ubuntu-latest
     environment:
-      # The name cannot 
-      name: development
+      name: ${{ github.ref_type == 'branch' && 'branches' || 'versions' }}
       url: https://models-resources.concord.org/starter-projects/${{ steps.s3-deploy.outputs.deployPath }}/index.html
     steps:
       - uses: actions/checkout@v2
