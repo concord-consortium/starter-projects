@@ -64,6 +64,9 @@ jobs:
       - build_test
       - cypress
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref_type == 'branch' && 'branches' || 'versions' }}
+      url: https://models-resources.concord.org/starter-projects/${{ steps.s3-deploy.outputs.deployPath }}/index.html
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -74,6 +77,7 @@ jobs:
           # This decreases the deploy time quite a bit
           CYPRESS_INSTALL_BINARY: 0
       - uses: concord-consortium/s3-deploy-action@v1
+        id: s3-deploy
         with:
           bucket: models-resources
           prefix: starter-projects
