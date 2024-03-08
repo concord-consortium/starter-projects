@@ -3,6 +3,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: "module",
+    project: ["tsconfig.json", "cypress/tsconfig.json"]
   },
   plugins: ["@typescript-eslint", "json", "react", "react-hooks"],
   env: {
