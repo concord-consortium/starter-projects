@@ -51,6 +51,10 @@
    - in the GitHub integration section choose the GitHub repo to connect this project to
    - copy the record key, and create a secret in the GitHub repository's settings with the name CYPRESS_RECORD_KEY
    - copy the Project ID and replace the value of `projectId` in cypress.json
+   - To enable extra Cypress to GitHub integration:
+       - go to the settings of the Cypress project
+       - go to the "Integrations" tab
+       - select the GitHub repository
 9. To record code coverage information to codecov.io:
    - go to https://codecov.io/
    - login with your GitHub credentials
