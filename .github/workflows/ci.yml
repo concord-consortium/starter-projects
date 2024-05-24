@@ -16,9 +16,10 @@ jobs:
       - name: Run Tests
         run: npm run test:coverage -- --runInBand
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           flags: jest
+          token: ${{ secrets.CODECOV_TOKEN }}
   cypress:
     runs-on: ubuntu-latest
     strategy:
