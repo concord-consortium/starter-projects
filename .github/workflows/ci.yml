@@ -7,8 +7,8 @@ jobs:
     name: Build and Run Jest Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
       - name: Install Dependencies
         run: npm ci
       - name: Build
@@ -32,8 +32,8 @@ jobs:
         containers: [1, 2, 3]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v4
+        uses: actions/checkout@v4
+      - uses: cypress-io/github-action@v6
         with:
           start: npm start
           wait-on: 'http://localhost:8080'
@@ -55,9 +55,10 @@ jobs:
           # by default.
           CYPRESS_coverage: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           flags: cypress
+          token: ${{ secrets.CODECOV_TOKEN }}
   s3-deploy:
     name: S3 Deploy
     needs:
@@ -68,8 +69,8 @@ jobs:
       name: ${{ github.ref_type == 'branch' && 'branches' || 'versions' }}
       url: https://models-resources.concord.org/starter-projects/${{ steps.s3-deploy.outputs.deployPath }}/index.html
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
       - name: Install Dependencies
         run: npm ci
         env:
@@ -86,4 +87,4 @@ jobs:
           # Parameters to GHActions have to be strings, so a regular yaml array cannot
           # be used. Instead the `|` turns the following lines into a string
           topBranches: |
-            ["master"]
+            ["main"]

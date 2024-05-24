@@ -39,7 +39,7 @@
 6. Push to your new repository
     ```
     git remote add origin https://github.com/concord-consortium/new-repository.git
-    git push -u origin master
+    git push -u origin main
     ```
 7. Open your new repository and update all instances of `starter-projects` to `new-repository` and `Starter Projects` to `New Repository`.
    Note: this will do some of the configuration for GitHub Actions deployment to S3, but you'll still need to follow
@@ -48,10 +48,15 @@
    - go to https://dashboard.cypress.io
    - create a new project
    - go to the settings for the project
-   - in the github integration section choose the github repo to connect this project to
-   - copy the record key, and create a secret in the github repositories settings with the name CYPRESS_RECORD_KEY
+   - in the GitHub integration section choose the GitHub repo to connect this project to
+   - copy the record key, and create a secret in the GitHub repository's settings with the name CYPRESS_RECORD_KEY
    - copy the Project ID and replace the value of `projectId` in cypress.json
-9. Your new repository is ready! Remove this section of the `README`, and follow the steps below to use it.
+9. To record code coverage information to codecov.io:
+   - go to https://codecov.io/
+   - login with your GitHub credentials
+   - find your new repository
+   - go to the settings for this repository and copy the CODECOV_TOKEN, and create a secret in the GitHub repository's settings.
+10. Your new repository is ready! Remove this section of the `README`, and follow the steps below to use it.
 
 ### Initial steps
 
@@ -89,7 +94,7 @@ You *do not* need to build to deploy the code, that is automatic.  See more info
 
 Follow the instructions in this
 [Guide](https://docs.google.com/document/d/1EacCSUhaHXaL8ll8xjcd4svyguEO-ipf5aF980-_q8E)
-to setup an S3 & Cloudfront distribution that can be used with Github actions.
+to setup an S3 & Cloudfront distribution that can be used with GitHub actions.
 See also `s3_deploy.sh`, and `./github/ci.yml`.
 
 Production releases to S3 are based on the contents of the /dist folder and are built automatically by GitHub Actions
@@ -108,14 +113,14 @@ To deploy a production release:
 4. Run `npm run build`
 5. Copy asset size markdown table from previous release and change sizes to match new sizes in `dist`
 6. Create `release-<version>` branch and commit changes, push to GitHub, create PR and merge
-7. Checkout master and pull
+7. Checkout main and pull
 8. Create an annotated tag for the version, of the form `v[x].[y].[z]`, include at least the version in the tag message. On the command line this can be done with a command like `git tag -a v1.2.3 -m "1.2.3 some info about this version"`
-9. Push the tag to github with a command like: `git push origin v1.2.3`.
+9. Push the tag to GitHub with a command like: `git push origin v1.2.3`.
 10. Use https://github.com/concord-consortium/starter-projects/releases to make this tag into a GitHub release.
 11. Run the release workflow to update http://starter-projects.concord.org/index.html. 
     1. Navigate to the actions page in GitHub and the click the "Release" workflow. This should take you to this page: https://github.com/concord-consortium/starter-projects/actions/workflows/release.yml. 
     2. Click the "Run workflow" menu button. 
-    3. Type in the tag name you want to release for example `v1.2.3`.  (Note this won't work until the PR has been merged to master)
+    3. Type in the tag name you want to release for example `v1.2.3`.  (Note this won't work until the PR has been merged to main)
     4. Click the `Run Workflow` button.
 
 ### Testing
