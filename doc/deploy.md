@@ -9,7 +9,7 @@ Deploying to S3 is handled by the [S3 Deploy Action](https://github.com/concord-
 - **branch builds**: when a developer pushes a branch, GitHub actions will build and deploy it to `starter-projects/branch/[branch-name]/index.html`. If the branch starts or ends with a number this is automatically stripped off and not included in the folder name.
 - **version builds**: when a developer pushes a tag, GitHub actions will build and deploy it to `starter-projects/version/[tag-name]/index.html`
 - **released version path**: the released version of the application is available at `starter-projects/index.html`
-- **master branch**: the master branch build is available at both `starter-projects/index-master.html` and `starter-projects/branch/master/index.html`.  The `index-master.html` form is preferred because it verifies the top level deployment is working for the current code. Additional branches can be added to the top level by updating the `topBranches` configuration in `ci.yml`
+- **main branch**: the main branch build is available at both `starter-projects/index-main.html` and `starter-projects/branch/main/index.html`.  The `index-main.html` form is preferred because it verifies the top level deployment is working for the current code. Additional branches can be added to the top level by updating the `topBranches` configuration in `ci.yml`
 - **staging or other top level paths**: additional top level releases can be added so they are available at `starter-projects/index-[name].html`
 
 ## index-top.html
