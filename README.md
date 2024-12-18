@@ -43,7 +43,7 @@
     ```
 7. Open your new repository and update all instances of `starter-projects` to `new-repository` and `Starter Projects` to `New Repository`.
    Note: this will do some of the configuration for GitHub Actions deployment to S3, but you'll still need to follow
-   the instructions [here](https://docs.google.com/document/d/e/2PACX-1vTpYjbGmUMxk_FswUmapK_RzVyEtm1WdnFcNByp9mqwHnp0nR_EzRUOiubuUCsGwzQgOnut_UiabYOM/pub).
+   the instructions [here](https://docs.google.com/document/d/1VqEwnHcmv5EnGq4fQI7l6zur_rV4F-BdKYEy4LdDjY4/edit?pli=1&tab=t.0).
 8. To record the cypress tests results to the cypress dashboard service:
    - go to https://dashboard.cypress.io
    - create a new project
