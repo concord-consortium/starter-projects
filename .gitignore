@@ -1,12 +1,14 @@
 coverage
 coverage-cypress
-dist
-node_modules
+dist/
+node_modules/
 npm-error.log
 top-test
-.DS_Store
 .nyc_output
 
-# Editors
-.idea
-
+# VSCode project settings
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
