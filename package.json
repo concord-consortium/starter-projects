@@ -35,7 +35,7 @@
     ]
   },
   "scripts": {
-    "start": "webpack serve --no-https",
+    "start": "webpack serve --server-type http",
     "start:secure": "webpack serve",
     "start:secure:no-certs": "webpack serve --server-options-cert-reset --server-options-key-reset",
     "build": "npm-run-all lint:build build:webpack",
@@ -106,7 +106,7 @@
     "eslint-plugin-testing-library": "^6.2.0",
     "eslint-webpack-plugin": "^4.0.1",
     "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.5.3",
+    "html-webpack-plugin": "^5.6.3",
     "identity-obj-proxy": "^3.0.0",
     "istanbul-lib-coverage": "^3.2.2",
     "jest": "^29.7.0",
@@ -123,9 +123,9 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2",
     "wait-on": "^7.2.0",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
   },
   "dependencies": {
     "react": "^18.2.0",

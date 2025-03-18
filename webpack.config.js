@@ -19,11 +19,22 @@ module.exports = (env, argv) => {
   return {
     context: __dirname, // to automatically find tsconfig.json
     devServer: {
-      static: 'dist',
+      static: {
+        directory: path.join(__dirname, 'dist'),
+      },
       hot: true,
-      https: {
-        key: path.resolve(os.homedir(), '.localhost-ssl/localhost.key'),
-        cert: path.resolve(os.homedir(), '.localhost-ssl/localhost.pem'),
+      server: {
+        type: 'https',
+        options: {
+          key: path.resolve(os.homedir(), '.localhost-ssl/localhost.key'),
+          cert: path.resolve(os.homedir(), '.localhost-ssl/localhost.pem'),
+        },
+      },
+      client: {
+        overlay: {
+          errors: true,
+          warnings: false,
+        },
       },
     },
     devtool: devMode ? 'eval-cheap-module-source-map' : 'source-map',
