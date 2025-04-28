@@ -66,9 +66,6 @@ jobs:
       - build_test
       - cypress
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.ref_type == 'branch' && 'development' || 'staging' }}
-      url: https://models-resources.concord.org/starter-projects/${{ steps.s3-deploy.outputs.deployPath }}/index.html
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

@@ -91,7 +91,7 @@ You *do not* need to build to deploy the code, that is automatic.  See more info
 ### Notes
 
 1. Make sure if you are using Visual Studio Code that you use the workspace version of TypeScript.
-   To ensure that you are open a TypeScript file in VSC and then click on the version number next to
+   To ensure that you are, open a TypeScript file in VSC and then click on the version number next to
    `TypeScript React` in the status bar and select 'Use Workspace Version' in the popup menu.
 
 ## Deployment
@@ -121,9 +121,9 @@ To deploy a production release:
 8. Create an annotated tag for the version, of the form `v[x].[y].[z]`, include at least the version in the tag message. On the command line this can be done with a command like `git tag -a v1.2.3 -m "1.2.3 some info about this version"`
 9. Push the tag to GitHub with a command like: `git push origin v1.2.3`.
 10. Use https://github.com/concord-consortium/starter-projects/releases to make this tag into a GitHub release.
-11. Run the release workflow to update http://starter-projects.concord.org/index.html. 
-    1. Navigate to the actions page in GitHub and the click the "Release" workflow. This should take you to this page: https://github.com/concord-consortium/starter-projects/actions/workflows/release.yml. 
-    2. Click the "Run workflow" menu button. 
+11. Run the release workflow to update http://starter-projects.concord.org/index.html.
+    1. Navigate to the actions page in GitHub and the click the "Release" workflow. This should take you to this page: https://github.com/concord-consortium/starter-projects/actions/workflows/release.yml.
+    2. Click the "Run workflow" menu button.
     3. Type in the tag name you want to release for example `v1.2.3`.  (Note this won't work until the PR has been merged to main)
     4. Click the `Run Workflow` button.
 
