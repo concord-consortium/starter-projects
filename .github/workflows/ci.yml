@@ -78,7 +78,6 @@ jobs:
           # skip installing cypress since it isn't needed for just building
           # This decreases the deploy time quite a bit
           CYPRESS_INSTALL_BINARY: 0
-      # change to an actual version once the updated action is released
       - uses: concord-consortium/s3-deploy-action@START-1-add-deployment-link-to-jira
         id: s3-deploy
         with:
