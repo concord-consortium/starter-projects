@@ -60,7 +60,15 @@
    - login with your GitHub credentials
    - find your new repository
    - go to the settings for this repository and copy the CODECOV_TOKEN, and create a secret in the GitHub repository's settings.
-10. Your new repository is ready! Remove this section of the `README`, and follow the steps below to use it.
+10. Set up a GitHub autolink reference so that Jira issue references (e.g. `OE-123`) in commits, PRs, and issues automatically link to Jira:
+    ```
+    gh api --method POST repos/concord-consortium/new-repository/autolinks \
+      -f key_prefix="<JIRA_PREFIX>-" \
+      -f url_template="https://concord-consortium.atlassian.net/browse/<JIRA_PREFIX>-<num>" \
+      -F is_alphanumeric=false
+    ```
+    Replace `new-repository` with the actual repository name and `<JIRA_PREFIX>` with the Jira project prefix (e.g. `OE`).
+11. Your new repository is ready! Remove this section of the `README`, and follow the steps below to use it.
 
 ### Initial steps
 
