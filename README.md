@@ -109,7 +109,7 @@ You *do not* need to build to deploy the code, that is automatic.  See more info
 
 S3 deployment is handled automatically by GitHub Actions using OIDC for AWS authentication.
 See [doc/deploy.md](doc/deploy.md) for details on how deployment works and
-[doc/deploy-setup.md](doc/deploy-setup.md) for the initial AWS setup.
+[doc/deploy-setup.md](https://github.com/concord-consortium/starter-projects/blob/main/doc/deploy-setup.md) for the initial AWS setup.
 
 Production releases to S3 are based on the contents of the /dist folder and are built automatically by GitHub Actions
 for each branch and tag pushed to GitHub.
