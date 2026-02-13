@@ -42,9 +42,12 @@
     git push -u origin main
     ```
 7. Open your new repository and update all instances of `starter-projects` to `new-repository` and `Starter Projects` to `New Repository`.
-   Note: this will do some of the configuration for GitHub Actions deployment to S3, but you'll still need to follow
-   the instructions [here](https://docs.google.com/document/d/1VqEwnHcmv5EnGq4fQI7l6zur_rV4F-BdKYEy4LdDjY4/edit?pli=1&tab=t.0).
-8. To record the cypress tests results to the cypress dashboard service:
+8. Set up S3 deployment by running `./scripts/create-deploy-role.sh new-repository` (requires AWS CLI credentials).
+   This creates the IAM role for OIDC-based deployment and updates `ci.yml` with the correct role ARN.
+   See [doc/deploy-setup.md](doc/deploy-setup.md) for details.
+9. Delete `doc/deploy-setup.md` and `scripts/create-deploy-role.sh` from your new repo. The canonical versions
+   of these files live in `starter-projects` and don't need to be duplicated.
+10. To record the cypress tests results to the cypress dashboard service:
    - go to https://dashboard.cypress.io
    - create a new project
    - go to the settings for the project
@@ -55,12 +58,12 @@
        - go to the settings of the Cypress project
        - go to the "Integrations" tab
        - select the GitHub repository
-9. To record code coverage information to codecov.io:
-   - go to https://codecov.io/
-   - login with your GitHub credentials
-   - find your new repository
-   - go to the settings for this repository and copy the CODECOV_TOKEN, and create a secret in the GitHub repository's settings.
-10. Set up a GitHub autolink reference so that Jira issue references (e.g. `OE-123`) in commits, PRs, and issues automatically link to Jira:
+11. To record code coverage information to codecov.io:
+    - go to https://codecov.io/
+    - login with your GitHub credentials
+    - find your new repository
+    - go to the settings for this repository and copy the CODECOV_TOKEN, and create a secret in the GitHub repository's settings.
+12. Set up a GitHub autolink reference so that Jira issue references (e.g. `OE-123`) in commits, PRs, and issues automatically link to Jira:
     ```
     gh api --method POST repos/concord-consortium/new-repository/autolinks \
       -f key_prefix="<JIRA_PREFIX>-" \
@@ -68,7 +71,7 @@
       -F is_alphanumeric=false
     ```
     Replace `new-repository` with the actual repository name and `<JIRA_PREFIX>` with the Jira project prefix (e.g. `OE`).
-11. Your new repository is ready! Remove this section of the `README`, and follow the steps below to use it.
+13. Your new repository is ready! Remove this section of the `README`, and follow the steps below to use it.
 
 ### Initial steps
 
@@ -104,10 +107,9 @@ You *do not* need to build to deploy the code, that is automatic.  See more info
 
 ## Deployment
 
-Follow the instructions in this
-[Guide](https://docs.google.com/document/d/1EacCSUhaHXaL8ll8xjcd4svyguEO-ipf5aF980-_q8E)
-to setup an S3 & Cloudfront distribution that can be used with GitHub actions.
-See also `s3_deploy.sh`, and `./github/ci.yml`.
+S3 deployment is handled automatically by GitHub Actions using OIDC for AWS authentication.
+See [doc/deploy.md](doc/deploy.md) for details on how deployment works and
+[doc/deploy-setup.md](doc/deploy-setup.md) for the initial AWS setup.
 
 Production releases to S3 are based on the contents of the /dist folder and are built automatically by GitHub Actions
 for each branch and tag pushed to GitHub.
