@@ -4,7 +4,8 @@ import path from "path";
 
 const rootDir = __dirname;
 
-process.env.BONJOUR_SERVICE_NAME = process.env.BONJOUR_SERVICE_NAME || "starter-projects";
+process.env.REPOSITORY_NAME = process.env.REPOSITORY_NAME || "starter-projects";
+process.env.BONJOUR_SERVICE_NAME = process.env.BONJOUR_SERVICE_NAME || process.env.REPOSITORY_NAME;
 
 const collectCoverage = !!process.env.CI;
 const coverageReporter: ReporterDescription = [
@@ -12,6 +13,11 @@ const coverageReporter: ReporterDescription = [
   {
     sourceRoot: rootDir,
     exclude: [],
+    rewritePath: ({absolutePath}: {absolutePath: string}) => {
+      return absolutePath
+        .replace(`${process.env.REPOSITORY_NAME}/`, "")
+        .replace(/\?[0-9a-z]+$/, "");
+    },
     resultDir: path.join(rootDir, "test-results", "coverage"),
     reports: [
       ["html"],
