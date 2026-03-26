@@ -103,10 +103,10 @@ See [doc/deploy.md](doc/deploy.md) for details on how deployment works and
 Production releases to S3 are based on the contents of the /dist folder and are built automatically by GitHub Actions
 for each branch and tag pushed to GitHub.
 
-Branches are deployed to http://starter-projects.concord.org/branch/<name>.
+Branches are deployed to https://models-resources.concord.org/starter-projects/branch/<name>.
 If the branch name starts or ends with a number this number is stripped off.
 
-Tags are deployed to http://starter-projects.concord.org/version/<name>.
+Tags are deployed to https://models-resources.concord.org/starter-projects/version/<name>.
 
 To deploy a production release:
 
@@ -120,7 +120,7 @@ To deploy a production release:
 8. Create an annotated tag for the version, of the form `v[x].[y].[z]`, include at least the version in the tag message. On the command line this can be done with a command like `git tag -a v1.2.3 -m "1.2.3 some info about this version"`
 9. Push the tag to GitHub with a command like: `git push origin v1.2.3`.
 10. Use https://github.com/concord-consortium/starter-projects/releases to make this tag into a GitHub release.
-11. Run the release workflow to update http://starter-projects.concord.org/index.html. 
+11. Run the release workflow to update https://models-resources.concord.org/starter-projects/index.html. 
     1. Navigate to the actions page in GitHub and the click the "Release" workflow. This should take you to this page: https://github.com/concord-consortium/starter-projects/actions/workflows/release.yml. 
     2. Click the "Run workflow" menu button. 
     3. Type in the tag name you want to release for example `v1.2.3`.  (Note this won't work until the PR has been merged to main)
