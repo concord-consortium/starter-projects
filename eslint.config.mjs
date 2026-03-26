@@ -25,13 +25,11 @@ export default typescriptEslint.config(
   js.configs.recommended,
   tsConfigs.recommended,
   tsConfigs.stylistic,
-  // @ts-expect-error for some reason the rules in comments.recommend are not compatible with
-  // RuleEntry. In another project using typescript 5.8.2, this was not an issue.
   comments.recommended,
   importPluginConfig.recommended,
   importPluginConfig.typescript,
   react.configs.flat?.recommended,
-  reactHooks.configs["recommended-latest"],
+  reactHooks.configs.flat["recommended-latest"],
   {
     name: "browser files",
     files: ["src/**"],
