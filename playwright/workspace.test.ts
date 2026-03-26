@@ -3,5 +3,7 @@ import { expect } from "@playwright/test";
 
 test("renders with text", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator(".app")).toHaveText("Hello World");
+  // Prefer getByRole over CSS selectors or data-testid for Playwright tests.
+  // See https://playwright.dev/docs/locators#quick-guide
+  await expect(page.getByRole("heading", { name: "Hello World" })).toBeVisible();
 });

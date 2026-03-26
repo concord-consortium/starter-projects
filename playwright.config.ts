@@ -32,6 +32,7 @@ const jsonReporter: ReporterDescription = ["json", { outputFile: path.join("test
 
 export default defineConfig<PlaywrightCoverageOptions>({
   testDir: "./playwright",
+  globalSetup: "./playwright/lib/global-setup.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

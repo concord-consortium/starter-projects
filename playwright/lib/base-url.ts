@@ -1,60 +1,13 @@
 /**
- * Custom Playwright test fixture that automatically discovers the webpack dev
- * server's port via Bonjour/mDNS when running locally. This removes the need
- * to hardcode a port — webpack-dev-server advertises itself as a Bonjour
- * service (configured in webpack.config.js), and this fixture finds it by name.
- *
- * On CI, baseURL is set explicitly in playwright.config.ts, so Bonjour
- * discovery is skipped. Import `test` from this file instead of from
+ * Custom Playwright test fixture that uses the dev server connection info
+ * discovered by global-setup.ts. On CI, baseURL is set explicitly in
+ * playwright.config.ts. Import `test` from this file instead of from
  * `@playwright/test` in all test files.
  */
 import { test as pwTest } from "@playwright/test";
 import { mixinFixtures as mixinCoverage } from "@bgotink/playwright-coverage";
-import { Bonjour, Service } from "bonjour-service";
 
 const base = mixinCoverage(pwTest);
-
-async function findDevServerPort(): Promise<string> {
-  const bonjour = new Bonjour();
-  try {
-    const service = await new Promise<Service | null>((resolve) => {
-      let settled = false;
-      const cleanup = (result: Service | null) => {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
-        browser.stop();
-        resolve(result);
-      };
-      const timer = setTimeout(() => cleanup(null), 3000);
-      const browser = bonjour.find({type: "http"}, _service => {
-        if (_service.name === process.env.BONJOUR_SERVICE_NAME) {
-          cleanup(_service);
-        }
-      });
-    });
-
-    if (!service) {
-      const name = process.env.BONJOUR_SERVICE_NAME;
-      throw new Error(
-        `No Bonjour service found with name '${name}'. Run \`npm start\` to start the dev server.`
-      );
-    }
-
-    return service.port.toString();
-  } finally {
-    bonjour.destroy();
-  }
-}
-
-async function getBaseUrl() {
-  let port = process.env.DEV_SERVER_PORT;
-  if (!port) {
-    port = await findDevServerPort();
-    process.env.DEV_SERVER_PORT = port;
-  }
-  return `http://localhost:${port}`;
-}
 
 export const test = base.extend({
   baseURL: async ({ baseURL }, use) => {
@@ -62,7 +15,12 @@ export const test = base.extend({
       if (process.env.CI) {
         throw new Error("baseURL must be set in CI environment");
       }
-      baseURL = await getBaseUrl();
+      const protocol = process.env.DEV_SERVER_PROTOCOL || "http";
+      const port = process.env.DEV_SERVER_PORT;
+      if (!port) {
+        throw new Error("DEV_SERVER_PORT not set. Is global-setup.ts configured in playwright.config.ts?");
+      }
+      baseURL = `${protocol}://localhost:${port}`;
     }
     await use(baseURL);
   },
