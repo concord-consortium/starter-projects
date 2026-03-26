@@ -47,5 +47,6 @@ export default async function globalSetup() {
   const server = await findDevServer();
   process.env.DEV_SERVER_PORT = server.port;
   process.env.DEV_SERVER_PROTOCOL = server.protocol;
+  // eslint-disable-next-line no-console
   console.log(`Using dev server at ${server.protocol}://localhost:${server.port}`);
 }
