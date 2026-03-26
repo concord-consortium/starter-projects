@@ -1,5 +1,4 @@
 import typescriptEslint from "typescript-eslint";
-import stylisticJsx from "@stylistic/eslint-plugin-jsx";
 import baseConfig from "./eslint.config.mjs";
 
 // style configuration extends default/development configuration
@@ -7,13 +6,10 @@ import baseConfig from "./eslint.config.mjs";
 export default typescriptEslint.config(
   ...baseConfig,
   {
-    plugins: {
-      "@stylistic/jsx": stylisticJsx
-    },
     rules: {
-      "@stylistic/js/array-bracket-spacing": ["error", "never"],
-      "@stylistic/js/object-curly-spacing": ["error", "always"],
-      "@stylistic/jsx/jsx-curly-spacing": ["error", { "when": "never", "children": { "when": "always" } }],
+      "@stylistic/array-bracket-spacing": ["error", "never"],
+      "@stylistic/object-curly-spacing": ["error", "always"],
+      "@stylistic/jsx-curly-spacing": ["error", { "when": "never", "children": { "when": "always" } }],
     }
   }
 );
