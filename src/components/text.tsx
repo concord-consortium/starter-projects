@@ -5,5 +5,5 @@ interface IProps {
 }
 
 export const Text: React.FC<IProps> = ({ text }) => (
-  <div>{ text }</div>
+  <h1>{ text }</h1>
 );

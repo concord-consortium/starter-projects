@@ -36,6 +36,9 @@ module.exports = (env, argv) => {
           warnings: false,
         },
       },
+      bonjour: {
+        name: process.env.BONJOUR_SERVICE_NAME || 'starter-projects',
+      },
     },
     devtool: devMode ? 'eval-cheap-module-source-map' : 'source-map',
     entry: './src/index.tsx',
@@ -51,15 +54,6 @@ module.exports = (env, argv) => {
           test: /\.tsx?$/,
           loader: 'ts-loader',
         },
-        // This code coverage instrumentation should only be added when needed. It makes
-        // the code larger and slower
-        process.env.CODE_COVERAGE ? {
-          test: /\.[tj]sx?$/,
-          loader: '@jsdevtools/coverage-istanbul-loader',
-          options: { esModules: true },
-          enforce: 'post',
-          exclude: path.join(__dirname, 'node_modules'),
-        } : {},
         {
           test: /\.(sa|sc|le|c)ss$/i,
           use: [

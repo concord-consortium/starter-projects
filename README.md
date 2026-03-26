@@ -47,23 +47,12 @@
    See [doc/deploy-setup.md](doc/deploy-setup.md) for details.
 9. Delete `doc/deploy-setup.md` and `scripts/create-deploy-role.sh` from your new repo. The canonical versions
    of these files live in `starter-projects` and don't need to be duplicated.
-10. To record the cypress tests results to the cypress dashboard service:
-   - go to https://dashboard.cypress.io
-   - create a new project
-   - go to the settings for the project
-   - in the GitHub integration section choose the GitHub repo to connect this project to
-   - copy the record key, and create a secret in the GitHub repository's settings with the name CYPRESS_RECORD_KEY
-   - copy the Project ID and replace the value of `projectId` in cypress.json
-   - To enable extra Cypress to GitHub integration:
-       - go to the settings of the Cypress project
-       - go to the "Integrations" tab
-       - select the GitHub repository
-11. To record code coverage information to codecov.io:
+10. To record code coverage information to codecov.io:
     - go to https://codecov.io/
     - login with your GitHub credentials
     - find your new repository
     - go to the settings for this repository and copy the CODECOV_TOKEN, and create a secret in the GitHub repository's settings.
-12. Set up a GitHub autolink reference so that Jira issue references (e.g. `OE-123`) in commits, PRs, and issues automatically link to Jira:
+11. Set up a GitHub autolink reference so that Jira issue references (e.g. `OE-123`) in commits, PRs, and issues automatically link to Jira:
     ```
     gh api --method POST repos/concord-consortium/new-repository/autolinks \
       -f key_prefix="<JIRA_PREFIX>-" \
@@ -71,7 +60,7 @@
       -F is_alphanumeric=false
     ```
     Replace `new-repository` with the actual repository name and `<JIRA_PREFIX>` with the Jira project prefix (e.g. `OE`).
-13. Your new repository is ready! Remove this section of the `README`, and follow the steps below to use it.
+12. Your new repository is ready! Remove this section of the `README`, and follow the steps below to use it.
 
 ### Initial steps
 
@@ -139,25 +128,20 @@ To deploy a production release:
 
 ### Testing
 
-Run `npm test` to run jest tests. Run `npm run test:full` to run jest and Cypress tests.
+Run `npm test` to run Jest unit tests. Run `npm run test:full` to run both Jest and Playwright tests.
 
-##### Cypress Run Options
+##### Playwright
 
-Inside of your `package.json` file:
-1. `--browser browser-name`: define browser for running tests
-2. `--group group-name`: assign a group name for tests running
-3. `--spec`: define the spec files to run
-4. `--headed`: show cypress test runner GUI while running test (will exit by default when done)
-5. `--no-exit`: keep cypress test runner GUI open when done running
-6. `--record`: decide whether or not tests will have video recordings
-7. `--key`: specify your secret record key
-8. `--reporter`: specify a mocha reporter
+End-to-end tests use [Playwright](https://playwright.dev/). To run them locally:
 
-##### Cypress Run Examples
+1. Start the dev server: `npm start`
+2. In another terminal: `npm run test:playwright`
 
-1. `cypress run --browser chrome` will run cypress in a chrome browser
-2. `cypress run --headed --no-exit` will open cypress test runner when tests begin to run, and it will remain open when tests are finished running.
-3. `cypress run --spec 'cypress/integration/examples/smoke-test.js'` will point to a smoke-test file rather than running all of the test files for a project.
+Or use `npm run test:playwright:open` to open the interactive test runner.
+
+When writing Playwright tests, prefer accessible locators over CSS selectors or `data-testid` attributes.
+See the [Playwright locator guide](https://playwright.dev/docs/locators#quick-guide) for the recommended priority:
+`getByRole` > `getByText` > `getByLabel` > `getByPlaceholder` > `getByTestId`.
 
 ## License
 
