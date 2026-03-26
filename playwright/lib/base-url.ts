@@ -18,19 +18,20 @@ async function findDevServerPort(): Promise<string> {
   const bonjour = new Bonjour();
   try {
     const service = await new Promise<Service | null>((resolve) => {
-      // eslint-disable-next-line prefer-const
-      let timer: NodeJS.Timeout;
+      let settled = false;
+      const cleanup = (result: Service | null) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        browser.stop();
+        resolve(result);
+      };
+      const timer = setTimeout(() => cleanup(null), 3000);
       const browser = bonjour.find({type: "http"}, _service => {
         if (_service.name === process.env.BONJOUR_SERVICE_NAME) {
-          if (timer !== undefined) clearTimeout(timer);
-          browser.stop();
-          resolve(_service);
+          cleanup(_service);
         }
       });
-      timer = setTimeout(() => {
-        browser.stop();
-        resolve(null);
-      }, 3000);
     });
 
     if (!service) {

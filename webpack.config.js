@@ -37,7 +37,7 @@ module.exports = (env, argv) => {
         },
       },
       bonjour: {
-        name: 'starter-projects',
+        name: process.env.BONJOUR_SERVICE_NAME || 'starter-projects',
       },
     },
     devtool: devMode ? 'eval-cheap-module-source-map' : 'source-map',
