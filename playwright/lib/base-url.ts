@@ -8,8 +8,11 @@
  * discovery is skipped. Import `test` from this file instead of from
  * `@playwright/test` in all test files.
  */
-import { test as base } from "@playwright/test";
+import { test as pwTest } from "@playwright/test";
+import { mixinFixtures as mixinCoverage } from "@bgotink/playwright-coverage";
 import { Bonjour, Service } from "bonjour-service";
+
+const base = mixinCoverage(pwTest);
 
 async function findDevServerPort(): Promise<string> {
   const bonjour = new Bonjour();
