@@ -3,35 +3,37 @@
 import stylisticEslintPlugin from "@stylistic/eslint-plugin";
 import globals from "globals";
 import jest from "eslint-plugin-jest";
-import json from "eslint-plugin-json";
+import json from "@eslint/json";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import testingLibrary from "eslint-plugin-testing-library";
 import tsParser from "@typescript-eslint/parser";
-import typescriptEslint, { configs as tsConfigs } from "typescript-eslint";
+import { configs as tsConfigs } from "typescript-eslint";
 import js from "@eslint/js";
+import { defineConfig } from "eslint/config";
 import comments from "@eslint-community/eslint-plugin-eslint-comments/configs";
 import { flatConfigs as importPluginConfig } from "eslint-plugin-import";
 
 
-// This helper `config()` function replaces the basic [] used by 
-// eslint normally:
-// https://typescript-eslint.io/packages/typescript-eslint#config
-export default typescriptEslint.config(
+export default defineConfig(
   {
     name: "ignore dist and node_modules",
     ignores: ["dist/", "node_modules/", ".vscode/", "old.*", "playwright-report/", "test-results/"]
   },
-  js.configs.recommended,
-  tsConfigs.recommended,
-  tsConfigs.stylistic,
-  // @ts-expect-error for some reason the rules in comments.recommend are not compatible with
-  // RuleEntry. In another project using typescript 5.8.2, this was not an issue.
-  comments.recommended,
-  importPluginConfig.recommended,
-  importPluginConfig.typescript,
-  react.configs.flat?.recommended,
-  reactHooks.configs["recommended-latest"],
+  {
+    name: "shared JS/TS configs",
+    files: ["**/*.{js,mjs,ts,tsx,jsx}"],
+    extends: [
+      js.configs.recommended,
+      tsConfigs.recommended,
+      tsConfigs.stylistic,
+      comments.recommended,
+      importPluginConfig.recommended,
+      importPluginConfig.typescript,
+      react.configs.flat?.recommended,
+      reactHooks.configs.flat["recommended-latest"],
+    ],
+  },
   {
     name: "browser files",
     files: ["src/**"],
@@ -41,6 +43,7 @@ export default typescriptEslint.config(
   },
   {
     name: "general rules",
+    files: ["**/*.{js,mjs,ts,tsx,jsx}"],
     plugins: {
       "@stylistic": stylisticEslintPlugin,
     },
@@ -175,7 +178,14 @@ export default typescriptEslint.config(
   {
     name: "json files",
     files: ["**/*.json"],
-    ...json.configs.recommended
+    ignores: ["package-lock.json"],
+    // @ts-expect-error @eslint/json types don't align with eslint's Plugin type yet
+    plugins: { json },
+    language: "json/json",
+    rules: {
+      "json/no-duplicate-keys": "error",
+      "json/no-empty-keys": "error",
+    },
   },
   { 
     name: "eslint configs",

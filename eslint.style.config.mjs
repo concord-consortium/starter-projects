@@ -1,9 +1,9 @@
-import typescriptEslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 import baseConfig from "./eslint.config.mjs";
 
 // style configuration extends default/development configuration
 // TODO: document why this is separate from the base config
-export default typescriptEslint.config(
+export default defineConfig(
   ...baseConfig,
   {
     rules: {
