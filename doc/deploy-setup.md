@@ -21,7 +21,7 @@ Run the script from this repo (or from `starter-projects`):
 ./scripts/create-deploy-role.sh <repo-name>
 ```
 
-This creates an IAM role named after the repo, tags it with `RepoName`, attaches the shared S3 deploy policy, scopes the trust policy so only that GitHub repo can assume it, and updates `.github/workflows/ci.yml` with the role ARN.
+This creates an IAM role named after the repo, tags it with `RepoName`, attaches the shared S3 deploy policy, and scopes the trust policy so only that GitHub repo can assume it. When run from inside the target repo, it also updates every workflow file in `.github/workflows/` that references `role-to-assume` with the new role ARN; when run from a different repo's checkout it skips the file edits and just prints the ARN.
 
 ## Note for repos created from starter-projects
 
