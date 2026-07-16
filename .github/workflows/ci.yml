@@ -53,7 +53,7 @@ jobs:
       - uses: concord-consortium/s3-deploy-action/deploy-path@v1
         if: always()
         id: s3-deploy-path
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v6
         if: always()
         with:
           role-to-assume: arn:aws:iam::612297603577:role/starter-projects
@@ -81,7 +81,7 @@ jobs:
       - uses: actions/setup-node@v4
       - name: Install Dependencies
         run: npm ci
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::612297603577:role/starter-projects
           aws-region: us-east-1

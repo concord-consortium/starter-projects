@@ -60,15 +60,31 @@ aws iam attach-role-policy \
   --role-name "$REPO_NAME" \
   --policy-arn "$POLICY_ARN"
 
-# --- update ci.yml with the role ARN ---
+# --- update workflow files with the role ARN ---
 ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${REPO_NAME}"
-CI_YML=".github/workflows/ci.yml"
-if [ -f "$CI_YML" ]; then
-  sed -i '' "s|role-to-assume: .*|role-to-assume: ${ROLE_ARN}|" "$CI_YML"
-  echo "Updated $CI_YML with role ARN: $ROLE_ARN"
-else
-  echo "Warning: $CI_YML not found. Add this role ARN to your workflow:"
+
+# Only edit workflow files when running inside the target repo. This guards
+# against clobbering another repo's workflows (e.g. running this script from
+# a starter-projects checkout to create a role for a different repo).
+CURRENT_REPO=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")
+if [ "$CURRENT_REPO" != "$REPO_NAME" ]; then
+  echo "Skipping workflow file updates: current repo '$CURRENT_REPO' is not '$REPO_NAME'."
+  echo "Add this role ARN to the deploy workflows in $REPO_NAME:"
   echo "  $ROLE_ARN"
+else
+  UPDATED=0
+  for wf in .github/workflows/*.yml .github/workflows/*.yaml; do
+    [ -f "$wf" ] || continue
+    if grep -q "role-to-assume:" "$wf"; then
+      sed -i '' "s|role-to-assume: .*|role-to-assume: ${ROLE_ARN}|" "$wf"
+      echo "Updated $wf with role ARN: $ROLE_ARN"
+      UPDATED=1
+    fi
+  done
+  if [ "$UPDATED" -eq 0 ]; then
+    echo "Warning: no workflow files reference 'role-to-assume:'. Add this role ARN to your workflows:"
+    echo "  $ROLE_ARN"
+  fi
 fi
 
 echo ""

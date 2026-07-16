@@ -43,7 +43,7 @@
     ```
 7. Open your new repository and update all instances of `starter-projects` to `new-repository` and `Starter Projects` to `New Repository`.
 8. Set up S3 deployment by running `./scripts/create-deploy-role.sh new-repository` (requires AWS CLI credentials).
-   This creates the IAM role for OIDC-based deployment and updates `ci.yml` with the correct role ARN.
+   This creates the IAM role for OIDC-based deployment and updates the deploy workflows (`ci.yml`, `release.yml`) with the correct role ARN.
    See [doc/deploy-setup.md](doc/deploy-setup.md) for details.
 9. Delete `doc/deploy-setup.md` and `scripts/create-deploy-role.sh` from your new repo. The canonical versions
    of these files live in `starter-projects` and don't need to be duplicated.
