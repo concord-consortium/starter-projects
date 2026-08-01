@@ -120,6 +120,14 @@ if aws iam get-role --role-name "$REPO_NAME" >/dev/null 2>&1; then
   aws iam update-assume-role-policy \
     --role-name "$REPO_NAME" \
     --policy-document "$TRUST_POLICY"
+  # Ensure the RepoName tag as well. It is set on the create path, so a role made
+  # by an older version of this script has it — but a role created another way may
+  # not, and the shared managed policy resolves
+  # models-resources/${aws:PrincipalTag/RepoName}/*, which without the tag becomes
+  # models-resources//* and grants nothing useful.
+  aws iam tag-role \
+    --role-name "$REPO_NAME" \
+    --tags "Key=RepoName,Value=$REPO_NAME"
   echo "arn:aws:iam::${ACCOUNT_ID}:role/${REPO_NAME}"
 else
   echo "Creating IAM role: $REPO_NAME"
