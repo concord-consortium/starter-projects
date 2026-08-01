@@ -71,7 +71,14 @@ Roles created before the script allowed both formats carry only the legacy value
 ./scripts/create-deploy-role.sh <repo-name>
 ```
 
-It detects the existing role and updates the trust policy in place, leaving the tag and attached policies untouched.
+It detects the existing role and updates the trust policy in place, leaving the `RepoName` tag and any inline policies untouched. It does still run `attach-role-policy`, so re-running also **ensures the shared `S3-deploy-by-role-tag` policy is attached** — harmless and idempotent for a normal repo.
+
+> ⚠️ **One exception.** If a role was deliberately built *without* the managed policy — because the repo deploys somewhere other than `models-resources` — re-running the script will attach it. `eepsmedia` is such a role. Either detach it afterwards, or update that role's trust policy directly:
+>
+> ```sh
+> aws iam update-assume-role-policy --role-name <repo-name> \
+>   --policy-document file://<trust-policy>.json
+> ```
 
 ## Deploying somewhere other than models-resources
 

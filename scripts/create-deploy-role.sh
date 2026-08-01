@@ -57,9 +57,20 @@ fi
 OWNER_ID="${REPO_JSON%% *}"
 REPO_ID="${REPO_JSON##* }"
 
-case "$OWNER_ID$REPO_ID" in
-  *[!0-9]*|"") echo "Error: unexpected owner/repo IDs from GitHub: '$REPO_JSON'" >&2; exit 1 ;;
-esac
+# Validate each ID separately. Checking the concatenation would let an empty
+# value through whenever the other is numeric, silently producing a malformed
+# subject like repo:org@/name@123:* — a role that can never be assumed.
+for id_pair in "owner:$OWNER_ID" "repo:$REPO_ID"; do
+  id_name="${id_pair%%:*}"
+  id_value="${id_pair#*:}"
+  case "$id_value" in
+    ""|*[!0-9]*)
+      echo "Error: expected a numeric ${id_name} id from GitHub, got '${id_value}'." >&2
+      echo "       Full response: '$REPO_JSON'" >&2
+      exit 1
+      ;;
+  esac
+done
 
 SUB_LEGACY="repo:${GITHUB_ORG}/${REPO_NAME}:*"
 SUB_IMMUTABLE="repo:${GITHUB_ORG}@${OWNER_ID}/${REPO_NAME}@${REPO_ID}:*"
@@ -156,6 +167,7 @@ fi
 echo ""
 echo "Done."
 echo ""
-echo "Note: this role grants access to ${S3_BUCKET} only. If your repo also deploys"
-echo "somewhere else (e.g. codap-resources), it needs an additional inline policy —"
-echo "see doc/deploy-setup.md."
+echo "Note: the attached policy grants access to ${S3_BUCKET} only — it grants nothing"
+echo "on any other bucket. A repo that also deploys elsewhere (e.g. codap-resources)"
+echo "needs an additional inline policy; one that deploys there *instead* needs a"
+echo "replacement policy and does not want this one. See doc/deploy-setup.md."
