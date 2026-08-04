@@ -16,9 +16,73 @@ fi
 
 REPO_NAME="$1"
 
+# --- check for required tools ---
+command -v aws >/dev/null 2>&1 || { echo "Error: aws CLI not found." >&2; exit 1; }
+command -v gh  >/dev/null 2>&1 || {
+  echo "Error: gh CLI not found. It is needed to look up the repo's numeric IDs" >&2
+  echo "       for the OIDC subject claim. Install it, or see doc/deploy-setup.md" >&2
+  echo "       for how to build the trust policy by hand." >&2
+  exit 1
+}
+
 # --- detect AWS account ID ---
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 echo "AWS Account: $ACCOUNT_ID"
+
+# --- work out the OIDC subject claim(s) to trust ---
+#
+# GitHub issues *immutable* subject claims — with the numeric owner and repo IDs
+# embedded, delimited by @ — for every repository created or transferred after
+# 2026-07-15. Older repositories keep the legacy name-only format unless opted in.
+#
+#   legacy:    repo:concord-consortium/my-repo:ref:refs/heads/main
+#   immutable: repo:concord-consortium@319219/my-repo@1318683401:ref:refs/heads/main
+#
+# A trust policy matching only one format never matches the other, and the failure
+# is misleading: AWS reports "Not authorized to perform sts:AssumeRoleWithWebIdentity",
+# which looks like a permissions problem when it is really a string mismatch.
+#
+# We allow BOTH forms. Each is precisely scoped to this one repository, so the role
+# works whichever format GitHub sends, and keeps working if an older repo is later
+# opted in to immutable claims.
+#
+# See: https://github.blog/changelog/2026-04-23-immutable-subject-claims-for-github-actions-oidc-tokens/
+echo "Looking up numeric IDs for $GITHUB_ORG/$REPO_NAME ..."
+if ! REPO_JSON=$(gh api "repos/${GITHUB_ORG}/${REPO_NAME}" --jq '"\(.owner.id) \(.id)"' 2>&1); then
+  echo "Error: could not read repos/${GITHUB_ORG}/${REPO_NAME} via gh." >&2
+  echo "       Check the repo name, and that you are authenticated (gh auth status)." >&2
+  echo "       Details: $REPO_JSON" >&2
+  exit 1
+fi
+OWNER_ID="${REPO_JSON%% *}"
+REPO_ID="${REPO_JSON##* }"
+
+# Validate each ID separately. Checking the concatenation would let an empty
+# value through whenever the other is numeric, silently producing a malformed
+# subject like repo:org@/name@123:* — a role that can never be assumed.
+for id_pair in "owner:$OWNER_ID" "repo:$REPO_ID"; do
+  id_name="${id_pair%%:*}"
+  id_value="${id_pair#*:}"
+  case "$id_value" in
+    ""|*[!0-9]*)
+      echo "Error: expected a numeric ${id_name} id from GitHub, got '${id_value}'." >&2
+      echo "       Full response: '$REPO_JSON'" >&2
+      exit 1
+      ;;
+  esac
+done
+
+SUB_LEGACY="repo:${GITHUB_ORG}/${REPO_NAME}:*"
+SUB_IMMUTABLE="repo:${GITHUB_ORG}@${OWNER_ID}/${REPO_NAME}@${REPO_ID}:*"
+echo "  legacy subject:    $SUB_LEGACY"
+echo "  immutable subject: $SUB_IMMUTABLE"
+
+# Report which one GitHub says it will actually send, when that setting is readable.
+# It needs more scope than the public repo endpoint, so failure here is not fatal.
+if ACTUAL_PREFIX=$(gh api "/repos/${GITHUB_ORG}/${REPO_NAME}/actions/oidc/customization/sub" \
+                     --jq '.sub_claim_prefix' 2>/dev/null); then
+  echo "  GitHub reports it will send: ${ACTUAL_PREFIX}:..."
+fi
 
 # --- build the trust policy ---
 TRUST_POLICY=$(cat <<EOF
@@ -36,7 +100,10 @@ TRUST_POLICY=$(cat <<EOF
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
         },
         "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:${GITHUB_ORG}/${REPO_NAME}:*"
+          "token.actions.githubusercontent.com:sub": [
+            "${SUB_IMMUTABLE}",
+            "${SUB_LEGACY}"
+          ]
         }
       }
     }
@@ -45,13 +112,31 @@ TRUST_POLICY=$(cat <<EOF
 EOF
 )
 
-# --- create the role ---
-echo "Creating IAM role: $REPO_NAME"
-aws iam create-role \
-  --role-name "$REPO_NAME" \
-  --assume-role-policy-document "$TRUST_POLICY" \
-  --tags "Key=RepoName,Value=$REPO_NAME" \
-  --query 'Role.Arn' --output text
+# --- create the role, or update an existing one ---
+# Re-running against an existing role updates its trust policy in place. That is
+# the migration path for roles created before both subject formats were allowed.
+if aws iam get-role --role-name "$REPO_NAME" >/dev/null 2>&1; then
+  echo "Role $REPO_NAME already exists — updating its trust policy"
+  aws iam update-assume-role-policy \
+    --role-name "$REPO_NAME" \
+    --policy-document "$TRUST_POLICY"
+  # Ensure the RepoName tag as well. It is set on the create path, so a role made
+  # by an older version of this script has it — but a role created another way may
+  # not, and the shared managed policy resolves
+  # models-resources/${aws:PrincipalTag/RepoName}/*, which without the tag becomes
+  # models-resources//* and grants nothing useful.
+  aws iam tag-role \
+    --role-name "$REPO_NAME" \
+    --tags "Key=RepoName,Value=$REPO_NAME"
+  echo "arn:aws:iam::${ACCOUNT_ID}:role/${REPO_NAME}"
+else
+  echo "Creating IAM role: $REPO_NAME"
+  aws iam create-role \
+    --role-name "$REPO_NAME" \
+    --assume-role-policy-document "$TRUST_POLICY" \
+    --tags "Key=RepoName,Value=$REPO_NAME" \
+    --query 'Role.Arn' --output text
+fi
 
 # --- attach the shared managed policy ---
 POLICY_ARN="arn:aws:iam::${ACCOUNT_ID}:policy/${MANAGED_POLICY_NAME}"
@@ -89,3 +174,8 @@ fi
 
 echo ""
 echo "Done."
+echo ""
+echo "Note: the attached policy grants access to ${S3_BUCKET} only — it grants nothing"
+echo "on any other bucket. A repo that also deploys elsewhere (e.g. codap-resources)"
+echo "needs an additional inline policy; one that deploys there *instead* needs a"
+echo "replacement policy and does not want this one. See doc/deploy-setup.md."
