@@ -92,6 +92,22 @@ If your repo deploys anywhere else — `codap-resources`, for instance — the r
 
 Two repos already do this. `story-builder` deploys to both buckets and carries an extra inline policy alongside the managed one; `eepsmedia` deploys *only* to `codap-resources` and so skips the managed policy entirely in favour of a single inline one. See [`docs/iam/README.md` in `concord-consortium/eepsmedia`](https://github.com/concord-consortium/eepsmedia/blob/master/docs/iam/README.md) for a worked example including the policy documents.
 
+## Hardening we have chosen not to do
+
+Code review tools sometimes suggest two changes to these workflows. We have considered both and decided against them for now. The reasons are recorded here so the discussion does not have to be repeated in every repository.
+
+### Splitting the build and the deploy into separate jobs
+
+The deploy job has `id-token: write`, and GitHub only allows permissions to be set per job, never per step. So every step in that job can request an OIDC token and assume the role, including `npm ci` and the build. The suggested alternative is to build in one job, upload the result as an artifact, and give `id-token: write` only to a second job that downloads the artifact and copies it to S3.
+
+We are not doing this. The risk it addresses is a third-party action or an npm dependency turning hostile and using the token itself. The role can only write to `models-resources/<repo-name>/`, so the damage is limited, and a hostile dependency could reach that same path anyway by corrupting the build output that the deploy job would go on to upload. Being careful about which third-party actions we use is a better defense than the extra jobs and the artifact passing. Note that the artifact approach can make some builds faster, so it may still be worth doing for that reason — this decision is about hardening, not about build structure.
+
+### Pinning actions to a commit SHA
+
+A tag can be moved, so `aws-actions/configure-aws-credentials@v6` is not guaranteed to be the same code from one run to the next. The suggested alternative is to pin every action to a full commit SHA.
+
+We are not doing this. A floating major tag picks up fixes automatically. A SHA pin means a pull request and a review in every repository every time an action releases a fix, and stale pins whenever that does not happen. The overhead is not worth the protection.
+
 ## Note for repos created from starter-projects
 
 After running the per-repo setup, the `doc/deploy-setup.md` file and `scripts/create-deploy-role.sh` script can be deleted from your repo to avoid having multiple copies that might get out of date. The canonical versions live in `starter-projects`.
