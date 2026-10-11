@@ -12,7 +12,10 @@ const coverageReporter: ReporterDescription = [
   "@bgotink/playwright-coverage",
   {
     sourceRoot: rootDir,
-    exclude: [],
+    // This is JavaScript coverage. A stylesheet appears only because the dev build's style-loader
+    // module, with hot-reload code no test runs, is mapped onto its lines; no CSS rule is measured.
+    // The paths matched here still end in webpack's "?hash", which rewritePath strips later.
+    exclude: ["**/*.{scss,css}", "**/*.{scss,css}\\?*"],
     rewritePath: ({absolutePath}: {absolutePath: string}) => {
       return absolutePath
         .replace(`${process.env.REPOSITORY_NAME}/`, "")
