@@ -39,7 +39,8 @@ export default defineConfig<PlaywrightCoverageOptions>({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // GitHub's Linux runner has 4 vCPUs, shared by the dev server and each worker's browser.
+  workers: process.env.CI ? 2 : undefined,
   reporter: [
     ["html", { open: "never" }],
     ["list"],
