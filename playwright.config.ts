@@ -12,7 +12,10 @@ const coverageReporter: ReporterDescription = [
   "@bgotink/playwright-coverage",
   {
     sourceRoot: rootDir,
-    exclude: [],
+    // This is JavaScript coverage. A stylesheet appears only because the dev build's style-loader
+    // module, with hot-reload code no test runs, is mapped onto its lines; no CSS rule is measured.
+    // The paths matched here still end in webpack's "?hash", which rewritePath strips later.
+    exclude: ["**/*.{scss,css}", "**/*.{scss,css}\\?*"],
     rewritePath: ({absolutePath}: {absolutePath: string}) => {
       return absolutePath
         .replace(`${process.env.REPOSITORY_NAME}/`, "")
@@ -36,7 +39,8 @@ export default defineConfig<PlaywrightCoverageOptions>({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // GitHub's Linux runner has 4 vCPUs, shared by the dev server and each worker's browser.
+  workers: process.env.CI ? 2 : undefined,
   reporter: [
     ["html", { open: "never" }],
     ["list"],
