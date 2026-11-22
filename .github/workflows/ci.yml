@@ -62,8 +62,13 @@ jobs:
           role-to-assume: arn:aws:iam::612297603577:role/starter-projects
           aws-region: us-east-1
       - name: Upload Playwright Report
-        if: always()
-        run: aws s3 sync ./playwright-report s3://models-resources/starter-projects/playwright-report/${{ steps.s3-deploy-path.outputs.deployPath }} --delete --cache-control "no-cache, max-age=0"
+        # Without a deploy path, the --delete would empty every other branch's report.
+        if: always() && steps.s3-deploy-path.outputs.deployPath
+        # The deploy path comes from the branch or tag name, which can contain shell syntax, so it
+        # is passed in the environment and quoted rather than written into the command.
+        run: aws s3 sync ./playwright-report "s3://models-resources/starter-projects/playwright-report/$DEPLOY_PATH" --delete --cache-control "no-cache, max-age=0"
+        env:
+          DEPLOY_PATH: ${{ steps.s3-deploy-path.outputs.deployPath }}
       - uses: daun/playwright-report-summary@v3
         if: always()
         with:
