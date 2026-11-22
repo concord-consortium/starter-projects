@@ -141,6 +141,8 @@ End-to-end tests use [Playwright](https://playwright.dev/). To run them locally:
 
 Or use `npm run test:playwright:open` to open the interactive test runner.
 
+Playwright doesn't check types when it runs the tests. `npm run check:playwright` does, and CI runs it.
+
 Import `test` from [`playwright/lib/base-url.ts`](playwright/lib/base-url.ts), not from
 `@playwright/test`: its fixture sets the dev server's URL and collects coverage. Lint enforces this.
 

@@ -58,6 +58,7 @@
     "test:coverage:watch": "jest --coverage --watchAll",
     "test:playwright": "playwright test",
     "test:playwright:open": "playwright test --ui",
+    "check:playwright": "tsc -p playwright",
     "test:full": "npm-run-all test test:playwright"
   },
   "repository": {

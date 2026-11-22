@@ -37,6 +37,9 @@ jobs:
           node-version: lts/*
       - name: Install Dependencies
         run: npm ci
+      # Playwright runs tests without checking their types, and the root tsconfig covers only src.
+      - name: Type-check Playwright tests
+        run: npm run check:playwright
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
