@@ -10,7 +10,7 @@ const jsonReporter: ReporterDescription = ["json", { outputFile: path.join("test
 export default defineConfig({
   testDir: "./playwright",
   globalSetup: "./playwright/lib/global-setup.ts",
-  // Coverage is collected on CI; see playwright/lib/coverage.ts.
+  // Coverage is collected when CODE_COVERAGE is set; see playwright/lib/coverage.ts.
   globalTeardown: "./playwright/lib/global-teardown.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
