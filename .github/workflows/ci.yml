@@ -72,13 +72,10 @@ jobs:
         run: aws s3 sync ./playwright-report "s3://models-resources/starter-projects/playwright-report/$DEPLOY_PATH" --delete --cache-control "no-cache, max-age=0"
         env:
           DEPLOY_PATH: ${{ steps.s3-deploy-path.outputs.deployPath }}
-      - uses: daun/playwright-report-summary@v3
+      - uses: daun/playwright-report-summary@v4
         if: always()
         with:
           report-file: test-results/results.json
-          # The default octicons are images from icongr.am, which no longer responds, so they show as
-          # broken images. The emojis need no outside images.
-          icon-style: emojis
           report-url: https://models-resources.concord.org/starter-projects/playwright-report/${{ steps.s3-deploy-path.outputs.deployPath }}/
   s3-deploy:
     name: S3 Deploy
