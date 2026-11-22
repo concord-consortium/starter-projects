@@ -40,7 +40,10 @@ module.exports = (env, argv) => {
         name: process.env.BONJOUR_SERVICE_NAME || 'starter-projects',
       },
     },
-    devtool: devMode ? 'eval-cheap-module-source-map' : 'source-map',
+    // The Playwright coverage maps the dev server's bundle back to the source through its .map file
+    // (playwright/lib/coverage.ts). The eval devtools emit no map file, and the "cheap" ones drop
+    // the columns needed to place each statement.
+    devtool: 'source-map',
     entry: './src/index.tsx',
     mode: 'development',
     output: {

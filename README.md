@@ -11,7 +11,7 @@
     ```
 3. Update the starter repo
 
-    First, update and run the starter project:
+    First, update and run the starter project. It needs Node 22.15 or later:
     ```
     cd new-repository
     npm install
@@ -144,6 +144,11 @@ Or use `npm run test:playwright:open` to open the interactive test runner.
 When writing Playwright tests, prefer accessible locators over CSS selectors or `data-testid` attributes.
 See the [Playwright locator guide](https://playwright.dev/docs/locators#quick-guide) for the recommended priority:
 `getByRole` > `getByText` > `getByLabel` > `getByPlaceholder` > `getByTestId`.
+
+On CI, the Playwright job uploads its coverage to Codecov under the `playwright` flag. The coverage comes
+from Chromium's built-in (V8) coverage, mapped to the source files by
+[monocart-coverage-reports](https://github.com/cenfun/monocart-coverage-reports); see
+[`playwright/lib/coverage.ts`](playwright/lib/coverage.ts).
 
 ## License
 
