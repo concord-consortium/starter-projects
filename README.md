@@ -141,6 +141,9 @@ End-to-end tests use [Playwright](https://playwright.dev/). To run them locally:
 
 Or use `npm run test:playwright:open` to open the interactive test runner.
 
+Import `test` from [`playwright/lib/base-url.ts`](playwright/lib/base-url.ts), not from
+`@playwright/test`: its fixture sets the dev server's URL and collects coverage. Lint enforces this.
+
 When writing Playwright tests, prefer accessible locators over CSS selectors or `data-testid` attributes.
 See the [Playwright locator guide](https://playwright.dev/docs/locators#quick-guide) for the recommended priority:
 `getByRole` > `getByText` > `getByLabel` > `getByPlaceholder` > `getByTestId`.

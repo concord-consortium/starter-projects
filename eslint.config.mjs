@@ -176,6 +176,18 @@ export default defineConfig(
     },
   },
   {
+    name: "Playwright tests import the shared fixture",
+    files: ["playwright/**"],
+    ignores: ["playwright/lib/base-url.ts"],
+    rules: {
+      "no-restricted-imports": ["error", { paths: [{
+        name: "@playwright/test",
+        importNames: ["test"],
+        message: "Import test from playwright/lib/base-url.ts, which collects coverage and sets the dev server URL.",
+      }] }],
+    },
+  },
+  {
     name: "json files",
     files: ["**/*.json"],
     ignores: ["package-lock.json"],
