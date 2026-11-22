@@ -76,6 +76,9 @@ jobs:
         if: always()
         with:
           report-file: test-results/results.json
+          # The default octicons are images from icongr.am, which no longer responds, so they show as
+          # broken images. The emojis need no outside images.
+          icon-style: emojis
           report-url: https://models-resources.concord.org/starter-projects/playwright-report/${{ steps.s3-deploy-path.outputs.deployPath }}/
   s3-deploy:
     name: S3 Deploy
