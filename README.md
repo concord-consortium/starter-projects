@@ -136,8 +136,9 @@ Run `npm test` to run Jest unit tests. Run `npm run test:full` to run both Jest 
 
 End-to-end tests use [Playwright](https://playwright.dev/). To run them locally:
 
-1. Start the dev server: `npm start`
-2. In another terminal: `npm run test:playwright`
+1. Install Playwright's Chromium, once: `npx playwright install chromium`
+2. Start the dev server: `npm start`
+3. In another terminal: `npm run test:playwright`
 
 Or use `npm run test:playwright:open` to open the interactive test runner.
 
