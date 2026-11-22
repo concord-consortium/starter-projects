@@ -46,6 +46,9 @@ jobs:
         run: npx playwright test
         env:
           CI: "true"
+          # Collect coverage. The dev server that Playwright starts also reads it, and builds a
+          # source map file for the coverage to use.
+          CODE_COVERAGE: "true"
       - name: Upload coverage to Codecov
         if: always()
         uses: codecov/codecov-action@v5

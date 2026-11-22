@@ -156,6 +156,9 @@ from Chromium's built-in (V8) coverage, mapped to the source files by
 [monocart-coverage-reports](https://github.com/cenfun/monocart-coverage-reports); see
 [`playwright/lib/coverage.ts`](playwright/lib/coverage.ts).
 
+To collect it locally, start the dev server with `npm run start:coverage`, which builds source map files
+the coverage needs, and run `npm run test:playwright:coverage`. The report is in `test-results/coverage/`.
+
 ## License
 
 Starter Projects are Copyright 2018 (c) by the Concord Consortium and is distributed under the [MIT license](http://www.opensource.org/licenses/MIT).

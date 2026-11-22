@@ -39,6 +39,7 @@
   },
   "scripts": {
     "start": "webpack serve --server-type http",
+    "start:coverage": "cross-env CODE_COVERAGE=true webpack serve --server-type http",
     "start:secure": "webpack serve",
     "start:secure:no-certs": "webpack serve --server-options-cert-reset --server-options-key-reset",
     "build": "npm-run-all lint:build build:webpack",
@@ -58,6 +59,7 @@
     "test:coverage:watch": "jest --coverage --watchAll",
     "test:playwright": "playwright test",
     "test:playwright:open": "playwright test --ui",
+    "test:playwright:coverage": "cross-env CODE_COVERAGE=true playwright test",
     "check:playwright": "tsc -p playwright",
     "test:full": "npm-run-all test test:playwright"
   },

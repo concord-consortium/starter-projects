@@ -15,7 +15,10 @@ import path from "path";
 import type { APIRequestContext } from "@playwright/test";
 import type { CoverageReportOptions, V8CoverageEntry } from "monocart-coverage-reports";
 
-export const collectCoverage = !!process.env.CI;
+// CI sets CODE_COVERAGE for the tests and for the dev server they start. To collect coverage locally,
+// start the dev server with npm run start:coverage, so that it serves source map files, and run
+// npm run test:playwright:coverage.
+export const collectCoverage = !!process.env.CODE_COVERAGE;
 
 // The webpack bundle. This leaves out the page's inline scripts.
 const isBundle = (entry: V8CoverageEntry) => /\/assets\/[^/]+\.js$/.test(entry.url);
@@ -63,7 +66,10 @@ export async function attachSourceMaps(request: APIRequestContext, entries: V8Co
     if (!sourceMap) {
       sourceMap = request.get(`${entry.url}.map`).then(response => {
         if (!response.ok()) {
-          throw new Error(`Couldn't load the source map for ${entry.url}: ${response.status()}`);
+          throw new Error(
+            `Couldn't load the source map for ${entry.url}: ${response.status()}. ` +
+            "Was the dev server started with CODE_COVERAGE set (npm run start:coverage)?"
+          );
         }
         return response.json();
       });
