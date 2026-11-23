@@ -11,7 +11,7 @@
     ```
 3. Update the starter repo
 
-    First, update and run the starter project:
+    First, update and run the starter project. It needs Node 22.15 or later:
     ```
     cd new-repository
     npm install
@@ -136,14 +136,34 @@ Run `npm test` to run Jest unit tests. Run `npm run test:full` to run both Jest 
 
 End-to-end tests use [Playwright](https://playwright.dev/). To run them locally:
 
-1. Start the dev server: `npm start`
-2. In another terminal: `npm run test:playwright`
+1. Install Playwright's Chromium, once: `npx playwright install chromium`
+2. Start the dev server: `npm start`
+3. In another terminal: `npm run test:playwright`
 
 Or use `npm run test:playwright:open` to open the interactive test runner.
+
+Playwright doesn't check types when it runs the tests. `npm run check:playwright` does, and CI runs it.
+
+Import `test` from [`playwright/lib/base-url.ts`](playwright/lib/base-url.ts), not from
+`@playwright/test`: its fixture sets the dev server's URL and collects coverage. Lint enforces this.
 
 When writing Playwright tests, prefer accessible locators over CSS selectors or `data-testid` attributes.
 See the [Playwright locator guide](https://playwright.dev/docs/locators#quick-guide) for the recommended priority:
 `getByRole` > `getByText` > `getByLabel` > `getByPlaceholder` > `getByTestId`.
+
+On CI, the Playwright job uploads its coverage to Codecov under the `playwright` flag. The coverage comes
+from Chromium's built-in (V8) coverage, mapped to the source files by
+[monocart-coverage-reports](https://github.com/cenfun/monocart-coverage-reports); see
+[`playwright/lib/coverage.ts`](playwright/lib/coverage.ts).
+
+MCR counts statement lines by parsing the code, so the `playwright` lines in Codecov closely match the
+`jest` ones. Two differences remain. MCR also counts a line where an untested branch starts on its own
+line, such as the `? ...` arm of a conditional, which Jest counts only as a branch. And it doesn't count
+`import` lines, because webpack handles the imports itself, while Jest does; Jest hits them in every
+file it loads, so this only matters for files that only Playwright runs.
+
+To collect it locally, start the dev server with `npm run start:coverage`, which builds source map files
+the coverage needs, and run `npm run test:playwright:coverage`. The report is in `test-results/coverage/`.
 
 ## License
 

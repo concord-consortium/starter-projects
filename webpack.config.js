@@ -40,7 +40,11 @@ module.exports = (env, argv) => {
         name: process.env.BONJOUR_SERVICE_NAME || 'starter-projects',
       },
     },
-    devtool: devMode ? 'eval-cheap-module-source-map' : 'source-map',
+    // https://survivejs.com/webpack/building/source-maps/
+    // The eval devtool rebuilds fastest in development. The Playwright coverage (CODE_COVERAGE) needs
+    // .map files which the eval devtools don't emit. So with CODE_COVERAGE set we use the full
+    // source maps.
+    devtool: devMode && !process.env.CODE_COVERAGE ? 'eval-cheap-module-source-map' : 'source-map',
     entry: './src/index.tsx',
     mode: 'development',
     output: {
