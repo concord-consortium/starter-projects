@@ -156,6 +156,12 @@ from Chromium's built-in (V8) coverage, mapped to the source files by
 [monocart-coverage-reports](https://github.com/cenfun/monocart-coverage-reports); see
 [`playwright/lib/coverage.ts`](playwright/lib/coverage.ts).
 
+MCR counts statement lines by parsing the code, so the `playwright` lines in Codecov closely match the
+`jest` ones. Two differences remain. MCR also counts a line where an untested branch starts on its own
+line, such as the `? ...` arm of a conditional, which Jest counts only as a branch. And it doesn't count
+`import` lines, because webpack handles the imports itself, while Jest does; Jest hits them in every
+file it loads, so this only matters for files that only Playwright runs.
+
 To collect it locally, start the dev server with `npm run start:coverage`, which builds source map files
 the coverage needs, and run `npm run test:playwright:coverage`. The report is in `test-results/coverage/`.
 

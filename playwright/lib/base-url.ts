@@ -30,7 +30,6 @@ export const test = pwTest.extend<{ coverage: void }>({
       await use();
       return;
     }
-    // Keep the coverage across navigations within the test.
     await page.coverage.startJSCoverage({ resetOnNavigation: false });
     try {
       await use();

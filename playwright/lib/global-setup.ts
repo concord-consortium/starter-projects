@@ -4,6 +4,7 @@
  * connection info in environment variables for the base-url fixture.
  */
 import { Bonjour, Service } from "bonjour-service";
+import { collectCoverage } from "./coverage";
 
 async function findDevServer(): Promise<{ port: string; protocol: string }> {
   const bonjour = new Bonjour();
@@ -32,7 +33,9 @@ async function findDevServer(): Promise<{ port: string; protocol: string }> {
     if (!service) {
       throw new Error(
         `No dev server found (looked for Bonjour service '${process.env.BONJOUR_SERVICE_NAME}'). ` +
-        "Start the dev server with: npm start or npm run start:secure"
+        (collectCoverage
+          ? "To collect coverage, start the dev server with: npm run start:coverage"
+          : "Start the dev server with: npm start or npm run start:secure")
       );
     }
 

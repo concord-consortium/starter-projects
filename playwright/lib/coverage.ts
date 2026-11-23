@@ -3,10 +3,7 @@
  *
  * Chromium measures the coverage natively (V8), so the app runs without instrumentation. MCR maps it
  * back to the source files and counts statements by parsing the code, so its lines closely match the
- * istanbul report from Jest. Two differences remain. MCR also counts a line where an untested branch
- * starts on its own line, such as the `? ...` arm of a conditional, which istanbul counts only as a
- * branch. And it doesn't count `import` lines, because webpack handles the imports itself, while Jest
- * does; Jest hits them in every file it loads, so this only matters for files Playwright alone runs.
+ * istanbul report from Jest.
  *
  * The fixture in base-url.ts adds each test's coverage, and global-teardown.ts writes the reports.
  */
@@ -15,9 +12,7 @@ import path from "path";
 import type { APIRequestContext } from "@playwright/test";
 import type { CoverageReportOptions, V8CoverageEntry } from "monocart-coverage-reports";
 
-// CI sets CODE_COVERAGE for the tests and for the dev server they start. To collect coverage locally,
-// start the dev server with npm run start:coverage, so that it serves source map files, and run
-// npm run test:playwright:coverage.
+// The dev server reads CODE_COVERAGE too, and with it set builds the .map files the coverage needs.
 export const collectCoverage = !!process.env.CODE_COVERAGE;
 
 // The webpack bundle. This leaves out the page's inline scripts.
